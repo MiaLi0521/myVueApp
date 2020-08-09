@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 操作元素的 class 列表和内联样式是数据绑定的一个常见需求。
+        因为它们都是 attribute，所以我们可以用 v-bind 处理它们：只需要通过表达式计算出字符串结果即可。不过，字符串拼接麻烦且易错。
+        因此，在将 v-bind 用于 class 和 style 时，Vue.js 做了专门的增强。
+        表达式结果的类型除了字符串之外，还可以是对象或数组。 
+    -->
+    <!-- 绑定HTML的class -->
+    <!-- 1.对象语法 -->
+    <!-- 传给 v-bind:class 一个对象，以动态地切换 class，并且v-bind:class 指令也可以与普通的 class attribute 共存 -->
+    <div id=app-1 class="static" v-bind:class="{ active: isActive, 'text-danger': hasError }">
+        <h3>对象语法</h3>
+    </div>
+    <!-- 绑定的数据对象不必内联定义在模板里： -->
+    <div id=app-2 v-bind:class="classObject">
+        <h3>绑定的数据对象不必内联定义在模板里</h3>
+    </div>
+    <div id=app-3 v-bind:class="classObject">
+        <h3>也可以在这里绑定一个返回对象的计算属性</h3>
+    </div>
+
+    <!-- 2.数组语法 -->
+    <!-- 我们可以把一个数组传给 v-bind:class，以应用一个 class 列表 -->
+    <div id=app-4 v-bind:class="[activeClass, errorClass]">
+        我们可以把一个数组传给 v-bind:class，以应用一个 class 列表
+    </div>
+    <div id=app-5 v-bind:class="[{active: isActive}, errorClass]">
+        在数组语法中也可以使用对象语法
+        <!-- 3.用在组件上 -->
+        <my-component class="foo bar" v-bind:class="[{active: isActive}, errorClass]"></my-component>
+    </div>
+
+    <!-- 绑定内联样式 -->
+    <!-- 1.对象语法 -->
+    <!-- v-bind:style 的对象语法十分直观——看着非常像 CSS，但其实是一个 JavaScript 对象。CSS property 名可以用驼峰式 (camelCase) 或短横线分隔 (kebab-case，记得用引号括起来) 来命名 -->
+    <div id=app-6>
+        <div v-bind:style="{color:activeColor, fontSize:fontSize + 'px'}">绑定内联样式</div>
+        <!-- 直接绑定到一个样式对象通常更好，这会让模板更清晰： -->
+        <div v-bind:style="styleObject">直接绑定到一个样式对象</div>
+        <!-- 利用数组语法，可以将多个样式对象应用到同一个元素上 -->
+        <div v-bind:style="[styleObject, divStyle]">将多个样式对象应用到同一个元素上</div>
+    </div>
+    
+</body>
+<script src="../vue.js"></script>
+<script>
+    var vm1 = new Vue({
+        el: '#app-1',
+        data: {
+            isActive: true,
+            hasError: false
+        },
+    })
+
+    var app2 = new Vue({
+        el: '#app-2',
+        data: {
+            classObject: {
+                active: true,
+                "text-danger" : true
+            }
+        }
+    })
+
+    var app3 = new Vue({
+        el: '#app-3',
+        data: {
+            isActive: true,
+            error: null
+        },
+        computed: {
+            // 也可以在这里绑定一个返回对象的计算属性
+            classObject: function(){
+                return {
+                    active: this.isActive && !this.error,
+                    "text-danger" : this.error && this.error.type === 'fatal'
+                }
+            }
+        }
+    })
+
+    var app4 = new Vue({
+        el: '#app-4',
+        data: {
+            activeClass:'active',
+            errorClass:'text-danger',
+        }
+    })
+
+    Vue.component('my-component', {
+        template: '<p class="baz boo">Hi</p>'
+    })
+    var app5 = new Vue({
+        el: '#app-5',
+        data: {
+            isActive: true,
+            errorClass: 'text-danger',
+        }
+    })
+
+    var app6 = new Vue({
+        el: '#app-6',
+        data: {
+            activeColor: 'red',
+            fontSize: 22,
+            styleObject: {
+                color: 'blue',
+                fontSize: '22px`',
+            },
+            divStyle: {
+                border: '1px solid red',
+                width: '200px',
+                height: "80px",
+            }
+        }
+    })
+</script>
+</html>

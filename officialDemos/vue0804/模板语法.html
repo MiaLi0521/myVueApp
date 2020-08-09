@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模板语法</title>
+</head>
+<body>
+    <!-- 插值 -->
+    <!-- 文本：数据绑定最常见的形式就是使用“Mustache”语法 (双大括号) 的文本插值 -->
+    <!-- 无论何时，绑定的数据对象上 msg property 发生了改变，插值处的内容都会更新。 -->
+    <span id='app-1'>Message: {{ msg }}</span>
+
+    <!-- 原始HTML：双大括号会将数据解释为普通文本，而非 HTML 代码。为了输出真正的 HTML，你需要使用 v-html 指令： -->
+    <!-- 你的站点上动态渲染的任意 HTML 可能会非常危险，因为它很容易导致 XSS 攻击。请只对可信内容使用 HTML 插值，绝不要对用户提供的内容使用插值。 -->
+    <div id='app-2'>
+        <p>Using mustaches: {{ rawHtml  }}</p>
+        <p>Using v-html directive: <span v-html="rawHtml"></span></p>
+    </div>
+
+    <!-- Mustache 语法不能作用在 HTML attribute 上，遇到这种情况应该使用 v-bind 指令 -->
+    <div id='app-3'>
+        <div v-bind:id="dynamicId">Hi, Mia~</div>
+        <!-- 对于布尔 attribute (它们只要存在就意味着值为 true)，v-bind 工作起来略有不同: -->
+        <!-- 如果 isButtonDisabled 的值是 null、undefined 或 false，则 disabled attribute 甚至不会被包含在渲染出来的 <button> 元素中。 -->
+        <button v-bind:disabled="isButtonDisabled">Hi, Mia</button>
+    </div>
+
+    <!-- 迄今为止，在我们的模板中，我们一直都只绑定简单的 property 键值。但实际上，对于所有的数据绑定，Vue.js 都提供了完全的 JavaScript 表达式支持。 -->
+    <!-- 有个限制就是，每个绑定都只能包含单个表达式 -->
+    <div id=app-4>
+        <!-- 模板表达式都被放在沙盒中，只能访问全局变量的一个白名单，如 Math 和 Date 。你不应该在模板表达式中试图访问用户定义的全局变量。 -->
+        <p>{{ number + 1 }}</p>
+        <p>{{ ok ? 'YES' : 'NO' }}</p>
+        <p>{{ message.split('').reverse().join('') }}</p>
+        <div v-bind:id="'my-div-'+number">VUE</div>
+    </div>
+
+
+    <!-- 指令 -->
+    <!-- 指令是带有 v- 前缀的特殊 attribute。指令 attribute 的值预期是单个 JavaScript 表达式 (v-for 是例外情况，稍后我们再讨论)。
+        指令的职责是，当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM。
+        eg:
+            <p v-if="seen">现在你看到我了</p>
+        这里，v-if 指令将根据表达式 seen 的值的真假来插入/移除 <p> 元素。 
+    -->
+
+    <!-- 参数：一些指令能够接收一个“参数”，在指令名称之后以冒号表示。例如，v-bind 指令可以用于响应式地更新 HTML attribute -->
+    <div id=app-5>
+        <a v-bind:href="url">动态URL</a>
+        <button v-on:click="doSomething">点我</button>
+    </div>
+
+    <!-- v-bind和v-on缩写 -->
+    <div id=app-6>
+        <a :href="url"> ... </a>
+        <br>
+        <a @click="doSomething" href="#"> ... </a>
+    </div>
+
+
+</body>
+<script src="../vue.js"></script>
+<script>
+    var app1 = new Vue({
+        el: '#app-1',
+        data: {
+            msg: "Hello, Vue!"
+        }
+    })
+
+    var app2 = new Vue({
+        el: '#app-2',
+        data: {
+            rawHtml: "<h2>Hello, Vue!</h2>"
+        }
+    })
+
+    var app3 = new Vue({
+        el: '#app-3',
+        data: {
+            dynamicId: 'mia',
+            isButtonDisabled: false,
+        }
+    })
+
+    app3.$watch('dynamicId', function(newValue, oldValue){
+        if(newValue == 'mia'){
+            app3.isButtonDisabled=false;
+        }else if(newValue == 'mia2'){
+            app3.isButtonDisabled=true;
+        }else if(newValue == 'mia3'){
+            app3.isButtonDisabled=null;
+        }else if(newValue == 'mia4'){
+            app3.isButtonDisabled=undefined;
+        }
+    })
+
+    var app4 = new Vue({
+        el: '#app-4',
+        data: {
+            number: 100,
+            ok: true,
+            message: '我爱你中国'
+        }
+    })
+
+    var app5 = new Vue({
+        el: '#app-5',
+        data: {
+            url: "https://www.baidu.com"
+        },
+        methods: {
+            doSomething: function(){
+                this.url = "https://www.google.com"
+            }
+        }
+    })
+
+    var app6 = new Vue({
+        el: '#app-6',
+        data: {
+            attributeName: 'href',
+            eventName: 'click',
+            url: 'https://www.taobao.com',
+        },
+        methods: {
+            doSomething: function(){
+                console.log("123")
+            }
+        }
+    })
+</script>
+</html>

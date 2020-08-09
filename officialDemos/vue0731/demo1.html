@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        {{ message }}
+    </div>
+
+    <div id="app-2">
+        <!-- 使title该元素的属性message与Vue实例的属性保持最新 -->
+        <span v-bind:title="message">
+            Passez votre souris sur moi pendant quelques secondes pour voir mon titre lié dynamiquement !
+        </span>
+    </div>
+
+    <div id="app-3">
+        <!-- 此示例说明我们不仅可以将数据绑定到文本和属性，而且可以绑定到DOM 的结构。此外，Vue提供了一个强大的过渡效果系统，当Vue插入/更新/删除元素时，该系统可以自动应用过渡效果。 -->
+        <p v-if="seen">Maintenant vous me voyez</p>
+    </div>
+
+    <div id="app-4">
+        <!-- 指令v-for可用于显示数据数组中的项目列表。 -->
+        <ol>
+            <li v-for="todo in todos">
+                {{ todo.text }}
+            </li>
+        </ol>
+    </div>
+
+    <div id="app-5">
+        <!-- 指令v-on为在Vue实例上调用方法的事件附加侦听器 -->
+        <p>{{ message }}</p>
+        <button v-on:click="reverseMessage">Message retourné</button>
+    </div>
+
+    <div id="app-6">
+        <!-- v-model一条指令，该指令使表单的字段和应用程序状态之间的双向数据绑定成为一种简单的形式 -->
+        <p>{{ message }}</p>
+        <input v-model="message">
+    </div>
+
+    <div id="app-7">
+        <!-- 组件系统是Vue中另一个重要的概念，因为它是一种抽象，它使我们可以构建由较小的，可重用的独立组件组成的较大的应用程序。考虑一下时，几乎所有类型的应用程序接口都可以抽象为组件树。 -->
+        <ul>
+            <to-item v-for="item in groceryList" v-bind:todo="item" v-bind:key="item.id"></to-item>
+        </ul>
+    </div>
+</body>
+<script src="../vue.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!'
+        }
+    })
+
+    var app2 = new Vue({
+        el: '#app-2',
+        data: {
+            message: 'Vous avez affiché cette page le ' + new Date().toLocaleString()
+        }
+    })
+
+    var app3 = new Vue({
+        el: '#app-3',
+        data: {
+            seen: true
+        }
+    })
+
+    var app4 = new Vue({
+        el: '#app-4',
+        data: {
+            todos: [
+                { text: 'Apprendre JavaScript' },
+                { text: 'Apprendre Vue' },
+                { text: 'Créer quelque chose de génial' }
+            ]
+        }
+    })
+
+    var app5 = new Vue({
+        el: '#app-5',
+        data: {
+            message: 'Hello Vue.js !'
+        },
+        methods: {
+            reverseMessage: function(){
+                this.message = this.message.split('').reverse().join('')
+            }
+        }
+    })
+
+    var app6 = new Vue({
+        el: '#app-6',
+        data: {
+            message: "Hello Vue !"
+        }
+    })
+
+    Vue.component('to-item', {
+        props: ['todo'],
+        template: '<li>{{ todo.text }}</li>'
+    })
+
+    var app7 = new Vue({
+        el: '#app-7', 
+        data: {
+            groceryList: [
+                { id: 0, text: 'Légumes' },
+                { id: 1, text: 'Fromage' },
+                { id: 2, text: 'Tout ce que les humains sont supposés manger' }
+            ]
+        }
+    })
+</script>
+</html>
